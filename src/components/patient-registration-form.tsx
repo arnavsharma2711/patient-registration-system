@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 import { bloodTypes, genderOptions } from "@/lib/constants";
@@ -42,7 +40,13 @@ import { toast } from "sonner";
 
 type FormValues = z.infer<typeof patientSchema>;
 
-export default function PatientRegistrationForm() {
+interface PatientRegistrationFormProps {
+  onRegistered: () => void;
+}
+
+export default function PatientRegistrationForm({
+  onRegistered,
+}: PatientRegistrationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -91,6 +95,7 @@ export default function PatientRegistrationForm() {
       });
 
       form.reset();
+      onRegistered();
     } catch (error) {
       console.error("Error registering patient:", error);
       toast.error("Registration Failed", {

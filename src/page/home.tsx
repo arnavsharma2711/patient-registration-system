@@ -1,8 +1,5 @@
 import { useState } from "react";
 
-import { useLiveQuery } from "@electric-sql/pglite-react";
-
-import type { Patient } from "@/lib/types";
 import { seedFakePatients } from "@/lib/seedData";
 
 import { Button } from "@/components/ui/button";
@@ -17,11 +14,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import PatientRegistrationForm from "@/components/patient-registration-form";
+import PatientRecords from "@/components/patient-records";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("register");
-
-  const patientsQuery = useLiveQuery<Patient>("select * from patients");
 
   return (
     <main className="container mx-auto py-8 px-4">
@@ -40,8 +36,9 @@ export default function Home() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-1">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="register">Register Patient</TabsTrigger>
+          <TabsTrigger value="records">Patient Records</TabsTrigger>
         </TabsList>
         <TabsContent value="register">
           <Card>
@@ -52,16 +49,26 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <PatientRegistrationForm />
+              <PatientRegistrationForm
+                onRegistered={() => setActiveTab("records")}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="records">
+          <Card>
+            <CardHeader>
+              <CardTitle>Patient Records</CardTitle>
+              <CardDescription>
+                View and manage all registered patients
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PatientRecords />
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
-
-      <h1>Records</h1>
-      {patientsQuery?.rows.map((ele: Patient) => (
-        <p key={ele.id}>{JSON.stringify(ele)}</p>
-      ))}
     </main>
   );
 }
