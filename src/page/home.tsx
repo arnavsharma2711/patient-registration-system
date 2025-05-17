@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import PatientRegistrationForm from "@/components/patient-registration-form";
 import PatientRecords from "@/components/patient-records";
+import SqlQueryInterface from "@/components/sql-query-interface";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("register");
@@ -36,9 +37,10 @@ export default function Home() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="register">Register Patient</TabsTrigger>
           <TabsTrigger value="records">Patient Records</TabsTrigger>
+          <TabsTrigger value="query">SQL Query</TabsTrigger>
         </TabsList>
         <TabsContent value="register">
           <Card>
@@ -65,6 +67,19 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <PatientRecords />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="query">
+          <Card>
+            <CardHeader>
+              <CardTitle>SQL Query Interface</CardTitle>
+              <CardDescription>
+                Run custom SQL queries on patient data
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SqlQueryInterface />
             </CardContent>
           </Card>
         </TabsContent>

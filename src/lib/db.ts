@@ -66,4 +66,14 @@ export const insertPatient = async (patient: Patient) => {
   }
 };
 
+export const executeQuery = async (query: string) => {
+  try {
+    const result = await db.query(query);
+    return result;
+  } catch (error) {
+    console.error("Error executing query:", error);
+    throw error;
+  }
+};
+
 export default db;

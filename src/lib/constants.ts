@@ -55,3 +55,5 @@ export const bloodTypes = [
     value: "Unknown",
   },
 ];
+
+export const defaultSQLQuery = "SELECT * FROM patients LIMIT 10;";
