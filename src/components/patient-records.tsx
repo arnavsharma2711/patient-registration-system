@@ -1,6 +1,10 @@
 import type { Patient } from "@/lib/types";
 
+import { useState } from "react";
+
 import { useLiveQuery } from "@electric-sql/pglite-react";
+
+import { ITEMS_PER_PAGE } from "@/lib/constants";
 
 import {
   Table,
@@ -11,13 +15,116 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+export function PaginationDemo({
+  totalCount,
+  currentPage,
+  setPage,
+}: {
+  totalCount: number;
+  currentPage: number;
+  setPage: (page: number) => void;
+}) {
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+  const visiblePages = getVisiblePages(currentPage, totalPages);
+
+  const handlePageClick = (page: number) => {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
+      setPage(page);
+    }
+  };
+
+  return (
+    <Pagination>
+      <PaginationContent className="w-full flex justify-between">
+        <PaginationItem
+          onClick={() => handlePageClick(currentPage - 1)}
+          className={
+            currentPage === 1
+              ? "text-muted-foreground pointer-events-none"
+              : "hover:cursor-pointer"
+          }
+        >
+          <PaginationPrevious />
+        </PaginationItem>
+        <div className="flex flex-row gap-2">
+          {visiblePages.map((page) =>
+            page === "..." ? (
+              <PaginationItem key={`ellipsis-${page}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={page} className="hover:cursor-pointer">
+                <PaginationLink
+                  isActive={page === currentPage}
+                  onClick={() => handlePageClick(page)}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            )
+          )}
+        </div>
+
+        <PaginationItem>
+          <PaginationNext
+            onClick={() => handlePageClick(currentPage + 1)}
+            className={
+              currentPage === totalPages
+                ? "text-muted-foreground  pointer-events-none"
+                : "hover:cursor-pointer"
+            }
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
+
+function getVisiblePages(current: number, total: number): (number | "...")[] {
+  if (total <= 5) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const pages: (number | "...")[] = [];
+
+  if (current > 0) pages.push(1);
+  if (current > 3) pages.push("...");
+
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  if (current < total - 2) pages.push("...");
+  if (current < total + 1) pages.push(total);
+
+  return pages;
+}
+
 export default function PatientRecords() {
-  const patientsQuery = useLiveQuery<Patient>("select * from patients");
+  const [page, setPage] = useState(1);
+
+  const patientsQuery = useLiveQuery<Patient>(
+    `select * from patients limit 10 offset ${10 * (page - 1)};`
+  );
+  const patientsCountQuery = useLiveQuery("select count(*) from patients;");
+  const totalCount = patientsCountQuery?.rows[0].count;
 
   return (
     <div className="space-y-4">
       <div className="rounded-md border overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto md:min-h-[590px]">
           {patientsQuery?.rows && patientsQuery.rows.length > 0 ? (
             <Table>
               <TableHeader>
@@ -34,7 +141,7 @@ export default function PatientRecords() {
               </TableHeader>
               <TableBody>
                 {patientsQuery?.rows.map((patient) => (
-                  <TableRow key={patient.id}>
+                  <TableRow key={patient.id} className="h-[55px]">
                     <TableCell className="font-medium">
                       {patient.first_name} {patient.last_name}
                     </TableCell>
@@ -57,16 +164,22 @@ export default function PatientRecords() {
               </TableBody>
             </Table>
           ) : patientsQuery?.rows && patientsQuery.rows.length === 0 ? (
-            <div className="text-center p-8 border rounded-md bg-muted/50 h-[570px]">
+            <div className="text-center p-8 border rounded-md bg-muted/50 md:h-[590px]">
               No patients registered yet
             </div>
           ) : (
-            <div className="text-center p-8 border rounded-md bg-muted/50 h-[570px]">
+            <div className="text-center p-8 border rounded-md bg-muted/50 md:h-[590px]">
               Loading patient records...
             </div>
           )}
         </div>
       </div>
+
+      <PaginationDemo
+        totalCount={Number(totalCount)}
+        currentPage={page}
+        setPage={setPage}
+      />
     </div>
   );
 }

@@ -57,3 +57,5 @@ export const bloodTypes = [
 ];
 
 export const defaultSQLQuery = "SELECT * FROM patients LIMIT 10;";
+
+export const ITEMS_PER_PAGE = 10;

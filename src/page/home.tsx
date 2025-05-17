@@ -37,10 +37,12 @@ export default function Home() {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="register">Register Patient</TabsTrigger>
-          <TabsTrigger value="records">Patient Records</TabsTrigger>
-          <TabsTrigger value="query">SQL Query</TabsTrigger>
+        <TabsList className="flex justify-start w-full overflow-auto no-scrollbar">
+          <div className="w-full flex flex-row gap-1">
+            <TabsTrigger value="register">Register Patient</TabsTrigger>
+            <TabsTrigger value="records">Patient Records</TabsTrigger>
+            <TabsTrigger value="query">SQL Query</TabsTrigger>
+          </div>
         </TabsList>
         <TabsContent value="register">
           <Card>
