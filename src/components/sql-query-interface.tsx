@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { defaultSQLQuery } from "@/lib/constants";
+import { defaultSQLQueries, defaultSQLQuery } from "@/lib/constants";
 
 import { executeQuery } from "@/lib/db";
 import { toast } from "sonner";
@@ -8,7 +8,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Play } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MousePointerClick, Play, Save } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -18,13 +19,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { Toggle } from "@/components/ui/toggle";
 
 export default function SqlQueryInterface() {
   const [query, setQuery] = useState(defaultSQLQuery);
   const [results, setResults] = useState<unknown[] | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showQueries, setShowQueries] = useState(false);
+  const [queryName, setQueryName] = useState("");
+  const [storedQueries, setStoredQueries] = useState<
+    { name: string; query: string }[]
+  >(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = localStorage.getItem("userQueries");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const handleExecuteQuery = async () => {
     if (!query.trim()) {
@@ -76,6 +92,27 @@ export default function SqlQueryInterface() {
     }
   };
 
+  const handleSaveQuery = () => {
+    if (!queryName.trim() || !query.trim()) {
+      toast.error("Invalid input", {
+        description: "Query name and content must not be empty.",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+
+    const updated = [...storedQueries, { name: queryName, query }];
+    setStoredQueries(updated);
+    localStorage.setItem("userQueries", JSON.stringify(updated));
+    toast.success("Saved", {
+      description: `Query "${queryName}" saved to local storage.`,
+    });
+
+    setQueryName("");
+    setIsSaving(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
@@ -93,10 +130,51 @@ export default function SqlQueryInterface() {
             placeholder="Enter your SQL query here..."
           />
         </div>
-        <Button onClick={handleExecuteQuery} disabled={isExecuting}>
-          <Play className="h-4 w-4 mr-2" />
-          {isExecuting ? "Executing..." : "Execute Query"}
-        </Button>
+        <div className="flex w-full justify-end gap-4">
+          <Input
+            placeholder="Query Label"
+            value={queryName}
+            onChange={(e) => setQueryName(e.target.value)}
+          />
+          <Button
+            onClick={handleSaveQuery}
+            disabled={isSaving}
+            variant={"outline"}
+          >
+            <Save className="size-4 mr-2" />
+            {isSaving ? "Saving..." : "Save Query"}
+          </Button>
+          <Button onClick={handleExecuteQuery} disabled={isExecuting}>
+            <Play className="size-4 mr-2" />
+            {isExecuting ? "Executing..." : "Execute Query"}
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <Toggle
+          onClick={() => setShowQueries(!showQueries)}
+          className="mb-4 cursor-pointer"
+        >
+          Saved Queries
+          <MousePointerClick />
+        </Toggle>
+        {showQueries && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {[...defaultSQLQueries, ...storedQueries].map((example) => (
+              <Button
+                key={example.name}
+                variant="outline"
+                className="justify-start h-auto py-2 px-3 text-left"
+                onClick={() => setQuery(example.query.trim())}
+              >
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-medium">{example.name}</span>
+                </div>
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       {error && (

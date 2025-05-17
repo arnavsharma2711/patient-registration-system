@@ -22,7 +22,7 @@ export default function Home() {
 
   return (
     <main className="container mx-auto py-8 px-4">
-      <Card className="mb-8">
+      <Card className="mb-4">
         <CardHeader>
           <CardTitle className="text-2xl md:text-3xl">
             Patient Management System
