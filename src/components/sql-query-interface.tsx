@@ -1,15 +1,16 @@
 import { useState } from "react";
 
 import { defaultSQLQueries, defaultSQLQuery } from "@/lib/constants";
-
+import { triggerDownloadFile } from "@/lib/utils";
 import { executeQuery } from "@/lib/db";
+
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MousePointerClick, Play, Save } from "lucide-react";
+import { Check, Copy, MousePointerClick, Play, Save } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -23,11 +24,12 @@ import { Toggle } from "@/components/ui/toggle";
 
 export default function SqlQueryInterface() {
   const [query, setQuery] = useState(defaultSQLQuery);
-  const [results, setResults] = useState<unknown[] | null>(null);
+  const [queryResult, setQueryResult] = useState<unknown[] | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const [showQueries, setShowQueries] = useState(false);
   const [queryName, setQueryName] = useState("");
   const [storedQueries, setStoredQueries] = useState<
@@ -55,20 +57,20 @@ export default function SqlQueryInterface() {
 
     setIsExecuting(true);
     setError(null);
-    setResults(null);
+    setQueryResult(null);
 
     try {
       const result = await executeQuery(query);
       console.log(result);
       if (result.rows.length > 0) {
         setColumns(result.fields.map((field) => field.name));
-        setResults(result.rows);
+        setQueryResult(result.rows);
         toast.success("Query Executed", {
           description: "The query executed successfully.",
         });
       } else {
         setColumns([]);
-        setResults([]);
+        setQueryResult([]);
         toast.info("Query Executed", {
           description:
             "The query executed successfully but returned no results.",
@@ -113,6 +115,13 @@ export default function SqlQueryInterface() {
     setIsSaving(false);
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(query);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success("Copied", { description: "Query copied to clipboard" });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
@@ -120,6 +129,19 @@ export default function SqlQueryInterface() {
           <Label htmlFor="query" className="text-sm font-medium">
             SQL Query
           </Label>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={copyToClipboard}
+            className="h-8"
+          >
+            {copied ? (
+              <Check className="h-4 w-4 mr-1" />
+            ) : (
+              <Copy className="h-4 w-4 mr-1" />
+            )}
+            {copied ? "Copied" : "Copy"}
+          </Button>
         </div>
         <div className="relative">
           <Textarea
@@ -141,11 +163,11 @@ export default function SqlQueryInterface() {
             disabled={isSaving}
             variant={"outline"}
           >
-            <Save className="size-4 mr-2" />
+            <Save className="size-4" />
             {isSaving ? "Saving..." : "Save Query"}
           </Button>
           <Button onClick={handleExecuteQuery} disabled={isExecuting}>
-            <Play className="size-4 mr-2" />
+            <Play className="size-4" />
             {isExecuting ? "Executing..." : "Execute Query"}
           </Button>
         </div>
@@ -187,14 +209,40 @@ export default function SqlQueryInterface() {
         </Card>
       )}
 
-      {results && (
+      {queryResult && (
         <div className="rounded-md border overflow-hidden p-4">
           <div className="flex flex-row gap-4 pb-4 justify-between">
             <Label>Query Data</Label>
+            <div className="flex flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() =>
+                  triggerDownloadFile({
+                    fileType: "CSV",
+                    data: queryResult,
+                    columns,
+                  })
+                }
+              >
+                Export CSV
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() =>
+                  triggerDownloadFile({
+                    fileType: "JSON",
+                    data: queryResult,
+                    columns,
+                  })
+                }
+              >
+                Export JSON
+              </Button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
-            {results.length === 0 ? (
+            {queryResult.length === 0 ? (
               <div className="p-4 text-center text-muted-foreground">
                 Query executed successfully. No results to display.
               </div>
@@ -208,7 +256,7 @@ export default function SqlQueryInterface() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {results.map((row, rowIndex) => (
+                  {queryResult.map((row, rowIndex) => (
                     <TableRow key={rowIndex}>
                       {columns.map((column) => (
                         <TableCell key={`${column}-${rowIndex}`}>
