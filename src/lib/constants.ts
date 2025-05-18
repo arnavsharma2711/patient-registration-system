@@ -199,3 +199,40 @@ export const defaultSQLQueries = [
     `,
   },
 ];
+
+export const DASHBOARD_ANALYTICS_QUERY = [
+  {
+    id: "total_patients",
+    name: "Total number of patients",
+    query: "SELECT COUNT(*) AS total_patients FROM patients;",
+  },
+  {
+    id: "recent_registrations",
+    name: "Patients registered in the last 30 days",
+    query:
+      "SELECT COUNT(*) AS recent_registrations FROM patients WHERE TO_DATE(registration_date, 'YYYY-MM-DD') >= CURRENT_DATE - INTERVAL '30 days';",
+  },
+  {
+    id: "patients_by_gender",
+    name: "Patients by gender",
+    query: "SELECT gender, COUNT(*) AS count FROM patients GROUP BY gender;",
+  },
+  {
+    id: "patients_by_age",
+    name: "Patients by age group",
+    query:
+      "SELECT CASE WHEN age < 18 THEN '0-17' WHEN age BETWEEN 18 AND 35 THEN '18-35' WHEN age BETWEEN 36 AND 50 THEN '36-50' WHEN age BETWEEN 51 AND 65 THEN '51-65' ELSE '66+' END AS age_group, COUNT(*) AS count FROM (SELECT EXTRACT(YEAR FROM AGE(TO_DATE(date_of_birth, 'YYYY-MM-DD'))) AS age FROM patients) AS derived GROUP BY age_group ORDER BY age_group;",
+  },
+  {
+    id: "insurance_status",
+    name: "Patients with insurance vs without",
+    query:
+      "SELECT COUNT(*) AS insurance_status FROM patients WHERE insurance_provider IS NOT NULL AND insurance_number IS NOT NULL;",
+  },
+  {
+    id: "missing_info",
+    name: "Patients with missing contact info",
+    query:
+      "SELECT COUNT(*) AS missing_info FROM patients WHERE (email IS NULL OR email = '') OR (phone IS NULL OR phone = '');",
+  },
+];

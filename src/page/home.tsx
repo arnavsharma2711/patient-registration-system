@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PatientRegistrationForm from "@/components/patient-registration-form";
 import PatientRecords from "@/components/patient-records";
 import SqlQueryInterface from "@/components/sql-query-interface";
+import Dashboard from "@/components/dashboard";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("register");
@@ -39,11 +40,25 @@ export default function Home() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="flex justify-start w-full overflow-auto no-scrollbar">
           <div className="w-full flex flex-row gap-1">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="register">Register Patient</TabsTrigger>
             <TabsTrigger value="records">Patient Records</TabsTrigger>
             <TabsTrigger value="query">SQL Query</TabsTrigger>
           </div>
         </TabsList>
+        <TabsContent value="dashboard">
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics Dashboard</CardTitle>
+              <CardDescription>
+                View patient statistics and trends
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Dashboard />
+            </CardContent>
+          </Card>
+        </TabsContent>
         <TabsContent value="register">
           <Card>
             <CardHeader>
