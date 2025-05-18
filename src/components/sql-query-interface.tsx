@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { defaultSQLQueries, defaultSQLQuery } from "@/lib/constants";
+import { DEFAULT_SQL_QUERIES, DEFAULT_SQL_QUERY } from "@/lib/constants";
 import { triggerDownloadFile } from "@/lib/utils";
 import { executeQuery } from "@/lib/db";
 
@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Toggle } from "@/components/ui/toggle";
 
 export default function SqlQueryInterface() {
-  const [query, setQuery] = useState(defaultSQLQuery);
+  const [query, setQuery] = useState(DEFAULT_SQL_QUERY);
   const [queryResult, setQueryResult] = useState<unknown[] | null>(null);
   const [columns, setColumns] = useState<string[]>([]);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -183,7 +183,7 @@ export default function SqlQueryInterface() {
         </Toggle>
         {showQueries && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {[...defaultSQLQueries, ...storedQueries].map((example) => (
+            {[...DEFAULT_SQL_QUERIES, ...storedQueries].map((example) => (
               <Button
                 key={example.name}
                 variant="outline"

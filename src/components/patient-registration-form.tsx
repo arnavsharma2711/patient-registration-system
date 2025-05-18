@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { bloodTypes, genderOptions } from "@/lib/constants";
+import { BLOOD_TYPES, GENDER_OPTIONS } from "@/lib/constants";
 import type { z } from "zod";
 import { patientSchema } from "@/lib/zod";
 import { insertPatient } from "@/lib/db";
@@ -210,7 +210,7 @@ export default function PatientRegistrationForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {genderOptions.map((option) => (
+                    {GENDER_OPTIONS.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -241,7 +241,7 @@ export default function PatientRegistrationForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {bloodTypes.map((option) => (
+                    {BLOOD_TYPES.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>

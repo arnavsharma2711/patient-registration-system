@@ -16,7 +16,7 @@ import {
 import { Skeleton } from "../ui/skeleton";
 import { DatabaseBackup } from "lucide-react";
 
-export function BarChartVertical({
+export default function BarChartVertical({
   isLoading,
   title,
   description,

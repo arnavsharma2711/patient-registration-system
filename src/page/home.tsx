@@ -19,7 +19,7 @@ import SqlQueryInterface from "@/components/sql-query-interface";
 import Dashboard from "@/components/dashboard";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("register");
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   return (
     <main className="container mx-auto py-8 px-4">

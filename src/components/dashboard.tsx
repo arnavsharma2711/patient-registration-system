@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+
+import { executeQuery } from "@/lib/db";
+import { DASHBOARD_ANALYTICS_QUERY } from "@/lib/constants";
+
 import { toast } from "sonner";
+
+import KeyMetrics from "@/components/dashboard/key-metrics-card";
+import PieChartComponent from "@/components/dashboard/pie-chart";
+import BarChartVertical from "@/components/dashboard/bar-chart-vertical";
+
+import { Button } from "@/components/ui/button";
 import {
   RefreshCw,
   Users,
@@ -8,11 +17,6 @@ import {
   AlertCircle,
   HeartPulse,
 } from "lucide-react";
-import { executeQuery } from "@/lib/db";
-import KeyMetrics from "./dashboard/key-metrics-card";
-import { PieChartComponent } from "./dashboard/pie-chart";
-import { BarChartVertical } from "./dashboard/bar-chart-vertical";
-import { DASHBOARD_ANALYTICS_QUERY } from "@/lib/constants";
 
 type DashboardData = {
   total_patients: React.ReactNode;

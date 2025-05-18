@@ -1,18 +1,19 @@
 import { fakerEN_IN as faker } from "@faker-js/faker";
 import type { Patient } from "@/lib/types";
 import { insertPatient } from "@/lib/db";
+import { BLOOD_TYPES } from "@/lib/constants";
 
 const maybe = <T>(value: T, chance = 0.6): T | null =>
   Math.random() < chance ? value : null;
 
 const generateFakePatient = (): Patient => {
   const gender = faker.helpers.weightedArrayElement([
-    { value: "Male", weight: 55 },
-    { value: "Female", weight: 43 },
-    { value: "Other", weight: 2 },
+    { value: "Male", weight: 54 },
+    { value: "Female", weight: 41 },
+    { value: "Others", weight: 4 },
+    { value: "Prefer not to say", weight: 1 },
   ]);
 
-  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const languages = ["English", "Kannada", "Tamil", "Punjabi", "Hindi"];
 
   const today = new Date();
@@ -34,7 +35,10 @@ const generateFakePatient = (): Patient => {
     ),
     phone: faker.phone.number({ style: "international" }),
     address: faker.location.streetAddress(),
-    blood_type: maybe(faker.helpers.arrayElement(bloodTypes), 0.5),
+    blood_type: maybe(
+      faker.helpers.arrayElement(BLOOD_TYPES.map((type) => type.value)),
+      0.5
+    ),
     medical_history: maybe(faker.lorem.paragraph(), 0.8),
     language_preference: maybe(faker.helpers.arrayElement(languages), 0.5),
     emergency_contact: maybe(

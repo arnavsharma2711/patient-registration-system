@@ -18,7 +18,7 @@ import {
 import { DatabaseBackup } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function PieChartComponent({
+export default function PieChartComponent({
   isLoading,
   title,
   description,
