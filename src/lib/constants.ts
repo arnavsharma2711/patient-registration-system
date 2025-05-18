@@ -157,4 +157,22 @@ export const DASHBOARD_ANALYTICS_QUERY = [
     query:
       "SELECT COUNT(*) AS missing_info FROM patients WHERE (email IS NULL OR email = '') OR (phone IS NULL OR phone = '');",
   },
+  {
+    id: "language_preference",
+    name: "Patient's language preferences distribution",
+    query:
+      "SELECT language_preference, COUNT(*) AS count FROM patients WHERE language_preference IS NOT NULL AND language_preference <> '' GROUP BY language_preference ORDER BY count DESC;",
+  },
+  {
+    id: "common_blood_type",
+    name: "Most common blood types",
+    query:
+      "SELECT blood_type, COUNT(*) AS count FROM patients WHERE blood_type IS NOT NULL AND blood_type != 'Unknown' AND blood_type <> '' GROUP BY blood_type ORDER BY count DESC;",
+  },
+  {
+    id: "monthly_registration",
+    name: "Monthly registration trend (last 12 months)",
+    query:
+      "SELECT TO_CHAR(TO_DATE(registration_date, 'YYYY-MM-DD'), 'YYYY-MM') AS month, COUNT(*) AS count FROM patients WHERE TO_DATE(registration_date, 'YYYY-MM-DD') >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11 months' GROUP BY month ORDER BY month;",
+  },
 ];

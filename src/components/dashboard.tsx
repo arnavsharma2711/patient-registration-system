@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 
 import { executeQuery } from "@/lib/db";
-import { DASHBOARD_ANALYTICS_QUERY } from "@/lib/constants";
+import { BLOOD_TYPES, DASHBOARD_ANALYTICS_QUERY } from "@/lib/constants";
 
 import { toast } from "sonner";
 
 import KeyMetrics from "@/components/dashboard/key-metrics-card";
-import PieChartComponent from "@/components/dashboard/pie-chart";
 import BarChartVertical from "@/components/dashboard/bar-chart-vertical";
+import BarChartHorizontal from "@/components/dashboard/bar-chart-horizontal";
+import LineChartComponent from "@/components/dashboard/line-chart";
+import PieChartComponent from "@/components/dashboard/pie-chart";
+import RadarChartComponent from "@/components/dashboard/radar-chart";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +28,9 @@ type DashboardData = {
   insurance_status: React.ReactNode;
   patients_by_gender: unknown[];
   patients_by_age: unknown[];
+  language_preference: unknown[];
+  common_blood_type: unknown[];
+  monthly_registration: unknown[];
 };
 
 export default function Dashboard() {
@@ -35,6 +41,9 @@ export default function Dashboard() {
     insurance_status: "N/A",
     patients_by_gender: [],
     patients_by_age: [],
+    language_preference: [],
+    common_blood_type: [],
+    monthly_registration: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -156,13 +165,71 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Gender Distribution */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <LineChartComponent
+          isLoading={isLoading}
+          title="Monthly Patient Registrations"
+          description="Registration trends for the past 12 months."
+          data={{
+            dataKey: "count",
+            nameKey: "month",
+            chartData: dashboardData.monthly_registration?.map(
+              (registration) => ({
+                ...(registration as Record<string, unknown>),
+              })
+            ),
+            chartConfig: {
+              count: {
+                label: "Count",
+              },
+            },
+          }}
+        />
+
+        <BarChartHorizontal
+          isLoading={isLoading}
+          title="Age Group Breakdown"
+          description="Patient count segmented by age groups."
+          data={{
+            dataKey: "count",
+            nameKey: "age_group",
+            chartData: dashboardData.patients_by_age?.map(
+              (age_group, index) => ({
+                ...(age_group as Record<string, unknown>),
+                fill: `var(--chart-${(index + 1) % 6})`,
+              })
+            ),
+            chartConfig: {
+              count: {
+                label: "Count",
+              },
+              "0-17": {
+                label: "0-17",
+                color: "oklch(var(--chart-1))",
+              },
+              "18-35": {
+                label: "18-35",
+                color: "oklch(var(--chart-2))",
+              },
+              "36-50": {
+                label: "36-50",
+                color: "oklch(var(--chart-3))",
+              },
+              "51-65": {
+                label: "51-65",
+                color: "oklch(var(--chart-4))",
+              },
+              "66+": {
+                label: "66+",
+                color: "oklch(var(--chart-5))",
+              },
+            },
+          }}
+        />
         <PieChartComponent
           isLoading={isLoading}
-          title="Gender Distribution"
-          description="Breakdown of user gender"
+          title="Gender Demographics"
+          description="Distribution of registered patients by gender."
           data={{
             dataKey: "count",
             nameKey: "gender",
@@ -198,14 +265,14 @@ export default function Dashboard() {
 
         <BarChartVertical
           isLoading={isLoading}
-          title="Age Group Distribution"
-          description="Breakdown of user age"
+          title="Blood Type Distribution"
+          description="Most common blood types among registered patients."
           data={{
             dataKey: "count",
-            nameKey: "age_group",
-            chartData: dashboardData.patients_by_age?.map(
-              (age_group, index) => ({
-                ...(age_group as Record<string, unknown>),
+            nameKey: "blood_type",
+            chartData: dashboardData.common_blood_type?.map(
+              (blood_type, index) => ({
+                ...(blood_type as Record<string, unknown>),
                 fill: `var(--chart-${(index + 1) % 6})`,
               })
             ),
@@ -213,25 +280,30 @@ export default function Dashboard() {
               count: {
                 label: "Count",
               },
-              "0-17": {
-                label: "0-17",
-                color: "oklch(var(--chart-1))",
-              },
-              "18-35": {
-                label: "18-35",
-                color: "oklch(var(--chart-2))",
-              },
-              "36-50": {
-                label: "36-50",
-                color: "oklch(var(--chart-3))",
-              },
-              "51-65": {
-                label: "51-65",
-                color: "oklch(var(--chart-4))",
-              },
-              "66+": {
-                label: "66+",
-                color: "oklch(var(--chart-5))",
+              ...BLOOD_TYPES.reduce((acc, type, index) => {
+                acc[type.value] = {
+                  label: type.label,
+                  color: `oklch(var(--chart-${(index + 1) % 6}))`,
+                };
+                return acc;
+              }, {} as Record<string, { label: string; color: string }>),
+            },
+          }}
+        />
+
+        <RadarChartComponent
+          isLoading={isLoading}
+          title="Language Preferences"
+          description="Preferred languages of patients, based on profile data."
+          data={{
+            dataKey: "count",
+            nameKey: "language_preference",
+            chartData: dashboardData.language_preference?.map((language) => ({
+              ...(language as Record<string, unknown>),
+            })),
+            chartConfig: {
+              count: {
+                label: "Count",
               },
             },
           }}

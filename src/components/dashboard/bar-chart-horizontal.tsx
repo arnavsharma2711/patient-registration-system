@@ -1,4 +1,11 @@
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LabelList,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {
   Card,
   CardContent,
@@ -12,10 +19,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
 import { DatabaseBackup } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function BarChartVertical({
+export default function BarChartHorizontal({
   isLoading,
   title,
   description,
@@ -39,14 +46,12 @@ export default function BarChartVertical({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="flex flex-row justify-between items-end gap-4 h-[200px]">
-            <Skeleton className="h-8/12 w-full" />
-            <Skeleton className="h-1/2 w-full" />
+          <div className="flex flex-col justify-between gap-4 h-[200px]">
+            <Skeleton className="h-full w-1/2" />
+            <Skeleton className="h-full w-4/6" />
             <Skeleton className="h-full w-full" />
-            <Skeleton className="h-3/4 w-full" />
-            <Skeleton className="h-8/12 w-full" />
-            <Skeleton className="h-1/2 w-full" />
-            <Skeleton className="h-full w-full" />
+            <Skeleton className="h-full w-4/6" />
+            <Skeleton className="h-full w-7/12" />
           </div>
         ) : chartData?.length === 0 ? (
           <div className="flex justify-center items-center gap-2 h-[350px]">
@@ -58,25 +63,41 @@ export default function BarChartVertical({
             <BarChart
               accessibilityLayer
               data={chartData}
+              layout="vertical"
               margin={{
-                top: 20,
+                right: 16,
               }}
             >
-              <CartesianGrid vertical={false} />
-              <XAxis
+              <CartesianGrid horizontal={false} />
+              <YAxis
                 dataKey={nameKey}
+                type="category"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
               />
+              <XAxis dataKey={dataKey} type="number" hide />
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent hideLabel />}
+                content={<ChartTooltipContent indicator="line" />}
               />
-              <Bar dataKey={dataKey} fill="var(--color-chart-1)" radius={8}>
+              <Bar
+                dataKey={dataKey}
+                layout="vertical"
+                fill="var(--color-chart-1)"
+                radius={4}
+              >
                 <LabelList
-                  position="top"
-                  offset={12}
+                  dataKey={nameKey}
+                  position="insideLeft"
+                  offset={8}
+                  className="fill-[--color-label]"
+                  fontSize={12}
+                />
+                <LabelList
+                  dataKey={dataKey}
+                  position="right"
+                  offset={8}
                   className="fill-foreground"
                   fontSize={12}
                 />

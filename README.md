@@ -35,7 +35,7 @@ A visual walkthrough of the Patient Management System UI and key features:
 
 📸 A clean, modern dashboard showcasing total patient count and basic analytics.
 
-![Dashboard](https://github.com/user-attachments/assets/64273fa8-5126-42d7-8ffa-80ead263bf21)
+![Dashboard](https://github.com/user-attachments/assets/5cbac79b-6b14-4b04-acb7-4368a170b92e)
 
 ---
 

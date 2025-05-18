@@ -1,4 +1,4 @@
-import { Pie, PieChart } from "recharts";
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 import {
   Card,
   CardContent,
@@ -9,15 +9,13 @@ import {
 import {
   type ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { DatabaseBackup } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function PieChartComponent({
+export default function RadarChartComponent({
   isLoading,
   title,
   description,
@@ -34,12 +32,12 @@ export default function PieChartComponent({
   };
 }) {
   return (
-    <Card className="flex flex-col col-span-4 md:col-span-2 lg:col-span-1">
-      <CardHeader className="items-center pb-0">
+    <Card className="col-span-4 md:col-span-2 lg:col-span-1">
+      <CardHeader className="items-center pb-4">
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 p-0">
+      <CardContent className="pb-0">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <Skeleton className="size-[200px] rounded-full" />
@@ -52,23 +50,18 @@ export default function PieChartComponent({
         ) : (
           <ChartContainer
             config={chartConfig}
-            className="mx-auto  max-h-[380px]"
+            className="mx-auto max-h-[250px]"
           >
-            <PieChart>
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie
-                data={chartData}
+            <RadarChart data={chartData}>
+              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+              <PolarAngleAxis dataKey={nameKey} />
+              <PolarGrid />
+              <Radar
                 dataKey={dataKey}
-                label
-                nameKey={nameKey}
-                paddingAngle={1}
-                stroke="#fff"
+                fill="var(--chart-1)"
+                fillOpacity={0.6}
               />
-              <ChartLegend
-                content={<ChartLegendContent nameKey={nameKey} />}
-                className="-translate-y-2 flex-wrap gap-2 [&>*]:justify-center"
-              />
-            </PieChart>
+            </RadarChart>
           </ChartContainer>
         )}
       </CardContent>
