@@ -178,15 +178,19 @@ export default function Dashboard() {
               },
               Female: {
                 label: "Female",
-                color: "hsl(var(--chart-1))",
+                color: "oklch(var(--chart-1))",
               },
               Male: {
                 label: "Male",
-                color: "hsl(var(--chart-2))",
+                color: "oklch(var(--chart-2))",
               },
               Others: {
                 label: "Others",
-                color: "hsl(var(--chart-3))",
+                color: "oklch(var(--chart-3))",
+              },
+              "Prefer not to say": {
+                label: "Prefer not to say",
+                color: "oklch(var(--chart-4))",
               },
             },
           }}
@@ -211,23 +215,23 @@ export default function Dashboard() {
               },
               "0-17": {
                 label: "0-17",
-                color: "hsl(var(--chart-1))",
+                color: "oklch(var(--chart-1))",
               },
               "18-35": {
                 label: "18-35",
-                color: "hsl(var(--chart-2))",
+                color: "oklch(var(--chart-2))",
               },
               "36-50": {
                 label: "36-50",
-                color: "hsl(var(--chart-3))",
+                color: "oklch(var(--chart-3))",
               },
               "51-65": {
                 label: "51-65",
-                color: "hsl(var(--chart-4))",
+                color: "oklch(var(--chart-4))",
               },
               "66+": {
                 label: "66+",
-                color: "hsl(var(--chart-5))",
+                color: "oklch(var(--chart-5))",
               },
             },
           }}
