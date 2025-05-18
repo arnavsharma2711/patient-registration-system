@@ -66,6 +66,16 @@ export const insertPatient = async (patient: Patient) => {
   }
 };
 
+export const deletePatient = async (id: number) => {
+  try {
+    await db.query("DELETE FROM patients WHERE id = $1;", [id]);
+    return true;
+  } catch (error) {
+    console.error("Error deleting patient:", error);
+    throw error;
+  }
+};
+
 export const executeQuery = async (query: string) => {
   try {
     const result = await db.query(query);

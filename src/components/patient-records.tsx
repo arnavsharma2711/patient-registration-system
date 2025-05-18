@@ -5,7 +5,20 @@ import { useState } from "react";
 import { useLiveQuery } from "@electric-sql/pglite-react";
 
 import { ITEMS_PER_PAGE } from "@/lib/constants";
+import { deletePatient } from "@/lib/db";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -14,7 +27,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   Pagination,
   PaginationContent,
@@ -24,6 +36,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function PaginationDemo({
   totalCount,
@@ -121,6 +135,22 @@ export default function PatientRecords() {
   const patientsCountQuery = useLiveQuery("select count(*) from patients;");
   const totalCount = patientsCountQuery?.rows[0].count;
 
+  const handleDeletePatient = async (id?: number) => {
+    if (id === undefined) return;
+    try {
+      await deletePatient(id);
+      localStorage.setItem("patient_db_updated", Date.now().toString());
+      toast.info("Patient Deleted", {
+        description: "Patient record has been successfully deleted.",
+      });
+    } catch (error) {
+      console.error("Error deleting patient:", error);
+      toast.error("Deletion Failed", {
+        description: "There was an error deleting the patient record.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="rounded-md border overflow-hidden">
@@ -137,6 +167,7 @@ export default function PatientRecords() {
                   <TableHead>Language Preference</TableHead>
                   <TableHead>Emergency Contact</TableHead>
                   <TableHead>Registration Date</TableHead>
+                  <TableHead className="w-[80px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -159,6 +190,41 @@ export default function PatientRecords() {
                     <TableCell>{patient.language_preference}</TableCell>
                     <TableCell>{patient.emergency_contact}</TableCell>
                     <TableCell>{patient.registration_date}</TableCell>
+                    <TableCell>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="size-4" />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Delete Patient Record
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete{" "}
+                              {patient.first_name} {patient.last_name}&apos;s
+                              record? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeletePatient(patient.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-red-700"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
