@@ -20,6 +20,15 @@ import {
   Save,
 } from "lucide-react";
 import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   Table,
   TableBody,
   TableCell,
@@ -28,7 +37,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { Toggle } from "@/components/ui/toggle";
 
 export default function SqlQueryInterface() {
   const [query, setQuery] = useState(DEFAULT_SQL_QUERY);
@@ -38,7 +46,6 @@ export default function SqlQueryInterface() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [showQueries, setShowQueries] = useState(false);
   const [queryName, setQueryName] = useState("");
   const [storedQueries, setStoredQueries] = useState<
     { name: string; query: string }[]
@@ -137,20 +144,77 @@ export default function SqlQueryInterface() {
           <Label htmlFor="query" className="text-sm font-medium">
             SQL Query
           </Label>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={copyToClipboard}
-            className="h-8"
-          >
-            {copied ? (
-              <Check className="h-4 w-4 mr-1" />
-            ) : (
-              <Copy className="h-4 w-4 mr-1" />
-            )}
-            {copied ? "Copied" : "Copy"}
-          </Button>
+
+          <div className="flex flex-row gap-2">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost">
+                  <MousePointerClick className="" />
+                  Saved Queries
+                </Button>
+              </SheetTrigger>
+
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Saved Queries</SheetTitle>
+                  <SheetDescription>
+                    Select a saved query to quickly populate your SQL input.
+                  </SheetDescription>
+                </SheetHeader>
+
+                <div className="flex flex-col p-4 gap-4 h-full">
+                  {[...DEFAULT_SQL_QUERIES, ...storedQueries].length > 0 ? (
+                    <>
+                      <Label>Default Queries</Label>
+                      <div className="max-h-1/2 flex flex-col gap-2 overflow-auto border p-2 rounded-md">
+                        {DEFAULT_SQL_QUERIES.map((example) => (
+                          <SheetClose key={example.name} asChild>
+                            <Button
+                              key={example.name}
+                              variant="outline"
+                              className="justify-start py-2 px-3 whitespace-normal text-sm font-semibold"
+                              onClick={() => setQuery(example.query.trim())}
+                            >
+                              {example.name}
+                            </Button>
+                          </SheetClose>
+                        ))}
+                      </div>
+                      <Label>User Saved Queries</Label>
+                      <div className="max-h-1/2 flex flex-col gap-2 overflow-auto border p-2 rounded-md">
+                        {storedQueries.map((example) => (
+                          <SheetClose key={example.name} asChild>
+                            <Button
+                              variant="outline"
+                              className="justify-start py-2 px-3 whitespace-normal text-sm font-semibold"
+                              onClick={() => setQuery(example.query.trim())}
+                            >
+                              {example.name}
+                            </Button>
+                          </SheetClose>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-muted-foreground text-sm">
+                      No saved queries available.
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <Button variant="ghost" onClick={copyToClipboard}>
+              {copied ? (
+                <Check className="h-4 w-4 mr-1" />
+              ) : (
+                <Copy className="h-4 w-4 mr-1" />
+              )}
+              {copied ? "Copied" : "Copy"}
+            </Button>
+          </div>
         </div>
+
         <div className="relative">
           <Textarea
             id="query"
@@ -160,6 +224,7 @@ export default function SqlQueryInterface() {
             placeholder="Enter your SQL query here..."
           />
         </div>
+
         <div className="flex w-full justify-end gap-4">
           <Input
             placeholder="Query Label"
@@ -179,32 +244,6 @@ export default function SqlQueryInterface() {
             {isExecuting ? "Executing..." : "Execute Query"}
           </Button>
         </div>
-      </div>
-
-      <div>
-        <Toggle
-          onClick={() => setShowQueries(!showQueries)}
-          className="mb-4 cursor-pointer"
-        >
-          Saved Queries
-          <MousePointerClick />
-        </Toggle>
-        {showQueries && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {[...DEFAULT_SQL_QUERIES, ...storedQueries].map((example) => (
-              <Button
-                key={example.name}
-                variant="outline"
-                className="justify-start h-auto py-2 px-3 text-left"
-                onClick={() => setQuery(example.query.trim())}
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-medium">{example.name}</span>
-                </div>
-              </Button>
-            ))}
-          </div>
-        )}
       </div>
 
       {error && (
