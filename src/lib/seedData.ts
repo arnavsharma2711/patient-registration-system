@@ -1,6 +1,6 @@
 import { fakerEN_IN as faker } from "@faker-js/faker";
 import type { Patient } from "@/lib/types";
-import { insertPatient } from "@/lib/db";
+import { bulkInsertPatients } from "@/lib/db";
 import { BLOOD_TYPES } from "@/lib/constants";
 
 const maybe = <T>(value: T, chance = 0.6): T | null =>
@@ -25,7 +25,7 @@ const generateFakePatient = (): Patient => {
     first_name: firstName,
     last_name: lastName,
     date_of_birth: faker.date
-      .birthdate({ min: 1950, max: 2005, mode: "year" })
+      .birthdate({ min: 1950, max: 2015, mode: "year" })
       .toISOString()
       .split("T")[0],
     gender,
@@ -63,10 +63,8 @@ const generateFakePatient = (): Patient => {
 
 export const seedFakePatients = async (count = 10) => {
   try {
-    for (let i = 0; i < count; i++) {
-      const patient = generateFakePatient();
-      await insertPatient(patient);
-    }
+    const patients = Array.from({ length: count }, generateFakePatient);
+    await bulkInsertPatients(patients);
     console.log(`${count} fake patients inserted successfully.`);
   } catch (error) {
     console.error("Error seeding fake patients:", error);

@@ -71,9 +71,9 @@ export function PaginationDemo({
           <PaginationPrevious />
         </PaginationItem>
         <div className="flex flex-row gap-2">
-          {visiblePages.map((page) =>
+          {visiblePages.map((page, index) =>
             page === "..." ? (
-              <PaginationItem key={`ellipsis-${page}`}>
+              <PaginationItem key={`ellipsis-${page}-${index}`}>
                 <PaginationEllipsis />
               </PaginationItem>
             ) : (

@@ -19,6 +19,11 @@ import {
   UserPlus,
   AlertCircle,
   HeartPulse,
+  Languages,
+  Syringe,
+  Mars,
+  CalendarClock,
+  UserSearch,
 } from "lucide-react";
 
 type DashboardData = {
@@ -33,7 +38,11 @@ type DashboardData = {
   monthly_registration: unknown[];
 };
 
-export default function Dashboard() {
+export default function Dashboard({
+  triggerRefresh,
+}: {
+  triggerRefresh: boolean;
+}) {
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     total_patients: "N/A",
     recent_registrations: "N/A",
@@ -109,6 +118,10 @@ export default function Dashboard() {
     fetchDashboardData();
   }, []);
 
+  useEffect(() => {
+    if (triggerRefresh) refreshData();
+  }, [triggerRefresh]);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -140,7 +153,7 @@ export default function Dashboard() {
         <KeyMetrics
           metricsData={{
             title: "Last 30 Days",
-            icon: <UserPlus className="size-4 text-muted-foreground" />,
+            icon: <UserSearch className="size-4 text-muted-foreground" />,
             value: dashboardData.recent_registrations,
           }}
           isLoading={isLoading}
@@ -168,6 +181,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <LineChartComponent
           isLoading={isLoading}
+          icon={<UserPlus className="size-4 text-muted-foreground" />}
           title="Monthly Patient Registrations"
           description="Registration trends for the past 12 months."
           data={{
@@ -189,6 +203,7 @@ export default function Dashboard() {
         <BarChartHorizontal
           isLoading={isLoading}
           title="Age Group Breakdown"
+          icon={<CalendarClock className="size-4 text-muted-foreground" />}
           description="Patient count segmented by age groups."
           data={{
             dataKey: "count",
@@ -229,6 +244,7 @@ export default function Dashboard() {
         <PieChartComponent
           isLoading={isLoading}
           title="Gender Demographics"
+          icon={<Mars className="size-4 text-muted-foreground" />}
           description="Distribution of registered patients by gender."
           data={{
             dataKey: "count",
@@ -266,6 +282,7 @@ export default function Dashboard() {
         <BarChartVertical
           isLoading={isLoading}
           title="Blood Type Distribution"
+          icon={<Syringe className="size-4 text-muted-foreground" />}
           description="Most common blood types among registered patients."
           data={{
             dataKey: "count",
@@ -294,6 +311,7 @@ export default function Dashboard() {
         <RadarChartComponent
           isLoading={isLoading}
           title="Language Preferences"
+          icon={<Languages className="size-4 text-muted-foreground" />}
           description="Preferred languages of patients, based on profile data."
           data={{
             dataKey: "count",

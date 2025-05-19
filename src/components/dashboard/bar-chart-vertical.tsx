@@ -18,11 +18,13 @@ import { DatabaseBackup } from "lucide-react";
 export default function BarChartVertical({
   isLoading,
   title,
+  icon,
   description,
   data: { dataKey, nameKey, chartData, chartConfig },
 }: {
   isLoading: boolean;
   title: string;
+  icon: React.ReactElement;
   description: string;
   data: {
     dataKey: string;
@@ -34,7 +36,10 @@ export default function BarChartVertical({
   return (
     <Card className="col-span-4 md:col-span-2 lg:col-span-1">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle>{title}</CardTitle>
+          {icon}
+        </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>

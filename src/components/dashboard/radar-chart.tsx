@@ -18,11 +18,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function RadarChartComponent({
   isLoading,
   title,
+  icon,
   description,
   data: { dataKey, nameKey, chartData, chartConfig },
 }: {
   isLoading: boolean;
   title: string;
+  icon: React.ReactElement;
   description: string;
   data: {
     dataKey: string;
@@ -34,7 +36,10 @@ export default function RadarChartComponent({
   return (
     <Card className="col-span-4 md:col-span-2 lg:col-span-1">
       <CardHeader className="items-center pb-4">
-        <CardTitle>{title}</CardTitle>
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle>{title}</CardTitle>
+          {icon}
+        </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="pb-0">

@@ -18,11 +18,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function LineChartComponent({
   isLoading,
   title,
+  icon,
   description,
   data: { dataKey, nameKey, chartData, chartConfig },
 }: {
   isLoading: boolean;
   title: string;
+  icon: React.ReactElement;
   description: string;
   data: {
     dataKey: string;
@@ -34,7 +36,10 @@ export default function LineChartComponent({
   return (
     <Card className="col-span-4">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle>{title}</CardTitle>
+          {icon}
+        </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>

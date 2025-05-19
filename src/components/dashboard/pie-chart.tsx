@@ -20,11 +20,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function PieChartComponent({
   isLoading,
   title,
+  icon,
   description,
   data: { dataKey, nameKey, chartData, chartConfig },
 }: {
   isLoading: boolean;
   title: string;
+  icon: React.ReactElement;
   description: string;
   data: {
     dataKey: string;
@@ -36,7 +38,10 @@ export default function PieChartComponent({
   return (
     <Card className="flex flex-col col-span-4 md:col-span-2 lg:col-span-1">
       <CardHeader className="items-center pb-0">
-        <CardTitle>{title}</CardTitle>
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle>{title}</CardTitle>
+          {icon}
+        </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 p-0">
@@ -50,16 +55,12 @@ export default function PieChartComponent({
             <span className="text-muted-foreground">Data Not Available</span>
           </div>
         ) : (
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto  max-h-[380px]"
-          >
+          <ChartContainer config={chartConfig} className="mx-auto">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />
               <Pie
                 data={chartData}
                 dataKey={dataKey}
-                label
                 nameKey={nameKey}
                 paddingAngle={1}
                 stroke="#fff"

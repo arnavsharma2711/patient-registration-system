@@ -66,6 +66,54 @@ export const insertPatient = async (patient: Patient) => {
   }
 };
 
+export const bulkInsertPatients = async (patients: Patient[]) => {
+  try {
+    const values: (string | null | undefined)[] = [];
+    const placeholders = patients
+      .map((patient, i) => {
+        const baseIndex = i * 16;
+        values.push(
+          patient.first_name,
+          patient.last_name,
+          patient.date_of_birth,
+          patient.gender,
+          patient.email,
+          patient.phone,
+          patient.address,
+          patient.blood_type,
+          patient.medical_history,
+          patient.language_preference,
+          patient.emergency_contact,
+          patient.national_id,
+          patient.insurance_provider,
+          patient.insurance_number,
+          patient.notes,
+          patient.registration_date
+        );
+
+        const placeholdersForRow = Array.from(
+          { length: 16 },
+          (_, j) => `$${baseIndex + j + 1}`
+        );
+        return `(${placeholdersForRow.join(", ")})`;
+      })
+      .join(", ");
+
+    const query = `
+      INSERT INTO patients (
+        first_name, last_name, date_of_birth, gender, email, phone, 
+        address, blood_type, medical_history, language_preference, emergency_contact,
+        national_id, insurance_provider, insurance_number, notes, registration_date
+      ) VALUES ${placeholders};
+    `;
+
+    await db.query(query, values);
+    console.log("Fake patients inserted successfully.");
+  } catch (error) {
+    console.error("Error seeding fake patients:", error);
+  }
+};
+
 export const deletePatient = async (id: number) => {
   try {
     await db.query("DELETE FROM patients WHERE id = $1;", [id]);

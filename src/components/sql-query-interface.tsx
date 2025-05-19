@@ -10,7 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Check, Copy, MousePointerClick, Play, Save } from "lucide-react";
+import {
+  Check,
+  Copy,
+  FileJson,
+  FileSpreadsheet,
+  MousePointerClick,
+  Play,
+  Save,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -224,6 +232,7 @@ export default function SqlQueryInterface() {
                   })
                 }
               >
+                <FileSpreadsheet className="size-4" />
                 Export CSV
               </Button>
               <Button
@@ -236,6 +245,7 @@ export default function SqlQueryInterface() {
                   })
                 }
               >
+                <FileJson className="size-4" />
                 Export JSON
               </Button>
             </div>
