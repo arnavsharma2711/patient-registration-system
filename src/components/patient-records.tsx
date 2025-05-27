@@ -139,7 +139,6 @@ export default function PatientRecords() {
     if (id === undefined) return;
     try {
       await deletePatient(id);
-      localStorage.setItem("patient_db_updated", Date.now().toString());
       toast.info("Patient Deleted", {
         description: "Patient record has been successfully deleted.",
       });

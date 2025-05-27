@@ -180,20 +180,24 @@ export default function SqlQueryInterface() {
                           </SheetClose>
                         ))}
                       </div>
-                      <Label>User Saved Queries</Label>
-                      <div className="max-h-1/2 flex flex-col gap-2 overflow-auto border p-2 rounded-md">
-                        {storedQueries.map((example) => (
-                          <SheetClose key={example.name} asChild>
-                            <Button
-                              variant="outline"
-                              className="justify-start py-2 px-3 whitespace-normal text-sm font-semibold"
-                              onClick={() => setQuery(example.query.trim())}
-                            >
-                              {example.name}
-                            </Button>
-                          </SheetClose>
-                        ))}
-                      </div>
+                      {storedQueries.length > 0 && (
+                        <>
+                          <Label>User Saved Queries</Label>
+                          <div className="max-h-1/2 flex flex-col gap-2 overflow-auto border p-2 rounded-md">
+                            {storedQueries.map((example) => (
+                              <SheetClose key={example.name} asChild>
+                                <Button
+                                  variant="outline"
+                                  className="justify-start py-2 px-3 whitespace-normal text-sm font-semibold"
+                                  onClick={() => setQuery(example.query.trim())}
+                                >
+                                  {example.name}
+                                </Button>
+                              </SheetClose>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </>
                   ) : (
                     <div className="text-muted-foreground text-sm">
